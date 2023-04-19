@@ -72,8 +72,8 @@ std::size_t mem_map::fstream::size() const {
 char mem_map::fstream::get() {
   char* fileData = static_cast<char*>(mmap(nullptr,
                                       size_,
-                                      PROT_READ | PROT_WRITE,
-                                      MAP_SHARED,
+                                      PROT_READ,
+                                      MAP_PRIVATE,
                                       fd,
                                       0));
   std::cout << size_ << std::endl;
