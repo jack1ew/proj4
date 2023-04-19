@@ -76,11 +76,11 @@ char mem_map::fstream::get() {
   if (fileData == MAP_FAILED) {
     std::cerr << "Error mapping file" << std::endl;
   }
-  char c = fileData[cursor];
-  cursor++;
   if (cursor == size_) {
     cursor = 0;
   }
+  char c = fileData[cursor];
+  cursor++;
   msync(fileData, size_, MS_SYNC);
   munmap(fileData, size_);
   
@@ -94,14 +94,16 @@ mem_map::fstream& mem_map::fstream::put(char c) {
                                       MAP_SHARED,
                                       fd,
                                       0));
+  std::cout << size_ << std::endl;
   if (fileData == MAP_FAILED) {
     std::cerr << "Error mapping file" << std::endl;
   }
-  fileData[cursor] = c;
-  cursor++;
   if (cursor == size_) {
     file_size++;
   }
+  fileData[cursor] = c;
+  cursor++;
+  
   ftruncate(fd, size_);
 }
 
