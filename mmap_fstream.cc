@@ -92,9 +92,8 @@ char mem_map::fstream::get() {
 }
 
 mem_map::fstream& mem_map::fstream::put(char c) {
-  struct stat fileInfo;
   char* fileData = static_cast<char*>(mmap(nullptr,
-                                      fileInfo.st_size,
+                                      size(),
                                       PROT_READ | PROT_WRITE,
                                       MAP_SHARED,
                                       fd,
