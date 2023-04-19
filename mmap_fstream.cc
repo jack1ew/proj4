@@ -70,9 +70,8 @@ std::size_t mem_map::fstream::size() const {
 }
 
 char mem_map::fstream::get() {
-  struct stat fileInfo;
   char* fileData = static_cast<char*>(mmap(nullptr,
-                                      fileInfo.st_size,
+                                      size_,
                                       PROT_READ | PROT_WRITE,
                                       MAP_SHARED,
                                       fd,
@@ -82,33 +81,31 @@ char mem_map::fstream::get() {
   }
   char c = fileData[cursor];
   cursor++;
-  if (cursor == size()) {
+  if (cursor == size_) {
     cursor = 0;
   }
-  msync(fileData, fileInfo.st_size, MS_SYNC);
-  munmap(fileData, fileInfo.st_size);
+  msync(fileData, size_, MS_SYNC);
+  munmap(fileData, size_);
   
   return c;
 }
 
 mem_map::fstream& mem_map::fstream::put(char c) {
   char* fileData = static_cast<char*>(mmap(nullptr,
-                                      size(),
+                                      size_,
                                       PROT_READ | PROT_WRITE,
                                       MAP_SHARED,
                                       fd,
                                       0));
-  std::cout << size() << std::endl;
   if (fileData == MAP_FAILED) {
     std::cerr << "Error mapping file" << std::endl;
   }
-  file_size = size();
   fileData[cursor] = c;
   cursor++;
-  if (cursor == file_size) {
+  if (cursor == size_) {
     file_size++;
   }
-  ftruncate(fd, file_size);
+  ftruncate(fd, size_);
 }
 
 int mem_map::fstream::mode_conversion(std::ios_base::openmode mode) {
