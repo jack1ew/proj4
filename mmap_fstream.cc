@@ -17,16 +17,13 @@ mem_map::fstream::fstream(const std::string& fname, std::ios_base::openmode mode
 }
 
 void mem_map::fstream::open(const std::string& fname) {
-  if (!is_open()) {
-    fd = ::open(fname.c_str(), O_RDWR | O_CREAT, 0664);
-    if (fd == -1) {
-      std::cerr << "Error opening file" << std::endl;
-    }
-  } else {
-    fd = ::open(fname.c_str(), O_RDWR | O_CREAT, 0664);
-    if (fd == -1) {
-      std::cerr << "Error opening file" << std::endl;
-    }
+  fd = ::open(fname.c_str(), O_RDWR | O_CREAT, 0664);
+  struct stat fileInfo;
+  if (::fstat(fd, &fileInfo) == -1)
+    std::cerr << "Error getting file size" << std::endl;
+  size_ = fileInfo.st_size;
+  if (fd == -1) {
+    std::cerr << "Error opening file" << std::endl;
   }
 }
 
@@ -76,7 +73,6 @@ char mem_map::fstream::get() {
                                       MAP_PRIVATE,
                                       fd,
                                       0));
-  std::cout << size_ << std::endl;
   if (fileData == MAP_FAILED) {
     std::cerr << "Error mapping file" << std::endl;
   }
