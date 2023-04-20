@@ -104,7 +104,6 @@ mem_map::fstream& mem_map::fstream::put(char c) {
                                       MAP_SHARED,
                                       fd,
                                       0));
-  std::cout << size_ << std::endl;
   if (fileData == MAP_FAILED) {
     std::cerr << "Error mapping file" << std::endl;
   }
@@ -125,7 +124,7 @@ int mem_map::fstream::mode_conversion(std::ios_base::openmode mode) {
     mask |= O_WRONLY | O_CREAT;
   }
   if (mode & std::ios_base::ate) {
-    std::cout << "ATE" << std::endl;
+
     mask |= O_APPEND;
     cursor = size();
   }
