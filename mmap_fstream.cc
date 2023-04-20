@@ -35,7 +35,7 @@ void mem_map::fstream::open(const std::string& fname) {
 void mem_map::fstream::open(const std::string& fname, std::ios_base::openmode mode) {
   
   int m = mode_conversion(mode);
-  fd = ::open(fname.c_str(), m, 0664);
+  fd = ::open(fname.c_str(), m, 0666);
   struct stat fileInfo;
   if (::fstat(fd, &fileInfo) == -1)
     std::cerr << "Error getting file size" << std::endl;
