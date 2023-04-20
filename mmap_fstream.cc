@@ -73,8 +73,8 @@ char mem_map::fstream::get() {
   std::cout << fileInfo.st_size << std::endl;
   char* fileData = static_cast<char*>(mmap(nullptr,
                                       fileInfo.st_size,
-                                      PROT_READ,
-                                      MAP_PRIVATE,
+                                      PROT_READ | PROT_WRITE,
+                                      MAP_SHARED,
                                       fd,
                                       0));
   if (fileData == MAP_FAILED) {
