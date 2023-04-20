@@ -114,8 +114,6 @@ mem_map::fstream& mem_map::fstream::put(char c) {
   if (cursor == size_) {
     size_++;
     ftruncate(fd, size_);
-    char* temp = static_cast<char*>(mremap(file_, size_ - 1, size_, MREMAP_MAYMOVE));
-    file_ = temp;
   }
   file_[cursor] = c;
   cursor++;
