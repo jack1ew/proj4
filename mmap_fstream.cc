@@ -94,7 +94,7 @@ mem_map::fstream& mem_map::fstream::put(char c) {
                                       MAP_SHARED,
                                       fd,
                                       0));
-  std::cout << size_ << std::endl;
+  std::cout << fd << std::endl;
   if (fileData == MAP_FAILED) {
     std::cerr << "Error mapping file" << std::endl;
   }
