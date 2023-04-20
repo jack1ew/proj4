@@ -115,10 +115,11 @@ mem_map::fstream& mem_map::fstream::put(char c) {
 
 int mem_map::fstream::mode_conversion(std::ios_base::openmode mode) {
   int mask = 0;
-  if (mode & std::ios_base::in) {
+  if (mode & std::ios_base::in && mode & std::ios_base::out) {
+    mask |= O_RDWR;
+  } else if (mode & std::ios_base::in) {
     mask |= O_RDONLY;
-  }
-  if (mode & std::ios_base::out) {
+  } else if (mode & std::ios_base::out) {
     mask |= O_WRONLY | O_CREAT;
   }
   if (mode & std::ios_base::ate) {
