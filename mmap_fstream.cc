@@ -12,7 +12,8 @@ mem_map::fstream::fstream(const std::string& fname) {
   open(fname);
 }
 
-mem_map::fstream::fstream(const std::string& fname, std::ios_base::openmode mode) {
+mem_map::fstream::fstream(const std::string& fname,
+                          std::ios_base::openmode mode) {
   open(fname, mode);
 }
 
@@ -50,7 +51,8 @@ void mem_map::fstream::open(const std::string& fname) {
 // fstat size
 // mmap for put and get
 // O_CREATE do not include if the file already exists.
-void mem_map::fstream::open(const std::string& fname, std::ios_base::openmode mode) {
+void mem_map::fstream::open(const std::string& fname,
+                            std::ios_base::openmode mode) {
   int flag = mode_conversion(mode);
   int prot = prot_conversion(mode);
   if (access(fname.c_str(), F_OK) == -1) {
@@ -91,7 +93,6 @@ void mem_map::fstream::close() {
     if (result == -1) {
       std::cerr << "Error closing file" << std::endl;
     }
-    
   }
 }
 
@@ -122,7 +123,6 @@ mem_map::fstream& mem_map::fstream::put(char c) {
     size_++;
     ftruncate(fd, size_);
   }
-  std::cout << size_ << " " << cursor << std::endl;
   file_[cursor] = c;
   cursor++;
   return *this;

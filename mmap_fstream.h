@@ -1,14 +1,8 @@
-// YOUR DOCUMENTATION GOES HERE
-//
-//
-#ifndef _INC_MMMAP_FSTREAM_H_
-#define _INC_MMMAP_FSTREAM_H_
-#include <ios>
-#include <string>
-#include <iostream>
-#include <vector>
-#include <algorithm>
-#include <sstream>
+// Jackie Wang Copyright 2023
+
+#ifndef MMAP_FSTREAM_H_
+#define MMAP_FSTREAM_H_
+
 #include <fcntl.h>
 #include <sys/mman.h>
 #include <unistd.h>
@@ -17,7 +11,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ios>
+#include <string>
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <sstream>
 #include <cstdio>
+
 
 namespace mem_map {
 
@@ -131,9 +132,8 @@ class fstream {
   char* file_;
   int fd;
   std::size_t size_;
-  
 };
 
 }  // namespace mem_map
 
-#endif // _INC_MMAP_FSTREAM_H_
+#endif  // MMAP_FSTREAM_H_
