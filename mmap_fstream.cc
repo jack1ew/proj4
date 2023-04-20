@@ -64,6 +64,9 @@ void mem_map::fstream::open(const std::string& fname, std::ios_base::openmode mo
   if (::fstat(fd, &fileInfo) == -1)
     std::cerr << "Error getting file size" << std::endl;
   size_ = fileInfo.st_size;
+  if (mode & std::ios_base::ate) {
+    cursor = size_;
+  }
   if (size_ == 0) {
     size_ += 1;
     ftruncate(fd, size_);
@@ -136,7 +139,6 @@ int mem_map::fstream::mode_conversion(std::ios_base::openmode mode) {
   }
   if (mode & std::ios_base::ate) {
     mask |= O_APPEND;
-    cursor = size();
   }
   return mask;
 }
