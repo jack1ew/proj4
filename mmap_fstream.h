@@ -124,6 +124,8 @@ class fstream {
 
   int mode_conversion(std::ios_base::openmode mode);
 
+  int prot_conversion(std::ios_base::openmode mode);
+
  private:
   std::size_t cursor = 0;
   char* file_;
