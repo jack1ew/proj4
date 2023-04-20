@@ -119,7 +119,7 @@ mem_map::fstream& mem_map::fstream::put(char c) {
     size_++;
     ftruncate(fd, size_);
   }
-  std::cout << size_ << cursor << std::endl;
+  std::cout << size_ << " " << cursor << std::endl;
   file_[cursor] = c;
   cursor++;
   return *this;
