@@ -124,7 +124,6 @@ int mem_map::fstream::mode_conversion(std::ios_base::openmode mode) {
     mask |= O_WRONLY | O_CREAT;
   }
   if (mode & std::ios_base::ate) {
-
     mask |= O_APPEND;
     cursor = size();
   }
