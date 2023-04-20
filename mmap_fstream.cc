@@ -70,10 +70,11 @@ char mem_map::fstream::get() {
   struct stat fileInfo;
   if (::fstat(fd, &fileInfo) == -1)
     std::cerr << "Error getting file size" << std::endl;
+  std::cout << fileInfo.st_size << std::endl;
   char* fileData = static_cast<char*>(mmap(nullptr,
                                       fileInfo.st_size,
                                       PROT_READ,
-                                      MAP_SHARED,
+                                      MAP_PRIVATE,
                                       fd,
                                       0));
   if (fileData == MAP_FAILED) {
