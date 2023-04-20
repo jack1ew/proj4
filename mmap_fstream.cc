@@ -19,8 +19,8 @@ mem_map::fstream::fstream(const std::string& fname, std::ios_base::openmode mode
 void mem_map::fstream::open(const std::string& fname) {
   int flag = mode_conversion(std::ios_base::in | std::ios_base::out);
   int prot = prot_conversion(std::ios_base::in | std::ios_base::out);
-  if (access(fname.c_str(), F_OK) != -1) {
-    flag |= O_CREAT;
+  if (access(fname.c_str(), F_OK) == -1) {
+    flag = flag | O_CREAT;
   }
   fd = ::open(fname.c_str(), flag, 0666);
   if (fd == -1) {
@@ -49,8 +49,8 @@ void mem_map::fstream::open(const std::string& fname) {
 void mem_map::fstream::open(const std::string& fname, std::ios_base::openmode mode) {
   int flag = mode_conversion(mode);
   int prot = prot_conversion(mode);
-  if (access(fname.c_str(), F_OK) != -1) {
-    flag |= O_CREAT;
+  if (access(fname.c_str(), F_OK) == -1) {
+    flag = flag | O_CREAT;
   }
   fd = ::open(fname.c_str(), flag, 0666);
   if (fd == -1) {
