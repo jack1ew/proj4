@@ -73,8 +73,8 @@ char mem_map::fstream::get() {
   std::cout << fileInfo.st_size << std::endl;
   char* fileData = static_cast<char*>(mmap(nullptr,
                                       fileInfo.st_size,
-                                      PROT_READ | PROT_WRITE,
-                                      MAP_SHARED,
+                                      PROT_READ,
+                                      MAP_PRIVATE,
                                       fd,
                                       0));
   if (fileData == MAP_FAILED) {
@@ -108,6 +108,7 @@ mem_map::fstream& mem_map::fstream::put(char c) {
   }
   fileData[cursor] = c;
   cursor++;
+  munmap(fileData, size_);
 }
 
 int mem_map::fstream::mode_conversion(std::ios_base::openmode mode) {
