@@ -17,13 +17,27 @@ mem_map::fstream::fstream(const std::string& fname, std::ios_base::openmode mode
 }
 
 void mem_map::fstream::open(const std::string& fname) {
-  fd = ::open(fname.c_str(), O_RDWR | O_CREAT, 0666);
+  int flag = mode_conversion(std::ios_base::in | std::ios_base::out);
+  int prot = prot_conversion(std::ios_base::in | std::ios_base::out);
+  if (access(fname.c_str(), F_OK) != -1) {
+    flag |= O_CREAT;
+  }
+  fd = ::open(fname.c_str(), flag, 0666);
+  if (fd == -1) {
+    std::cerr << "Error opening file" << std::endl;
+  }
   struct stat fileInfo;
   if (::fstat(fd, &fileInfo) == -1)
     std::cerr << "Error getting file size" << std::endl;
   size_ = fileInfo.st_size;
-  if (fd == -1) {
-    std::cerr << "Error opening file" << std::endl;
+  file_ = static_cast<char*>(mmap(nullptr,
+                                  size_,
+                                  prot,
+                                  MAP_SHARED,
+                                  fd,
+                                  0));
+  if (file_ == MAP_FAILED) {
+    std::cerr << "Error mapping file" << std::endl;
   }
 }
 
@@ -33,20 +47,35 @@ void mem_map::fstream::open(const std::string& fname) {
 // mmap for put and get
 // O_CREATE do not include if the file already exists.
 void mem_map::fstream::open(const std::string& fname, std::ios_base::openmode mode) {
-  
-  int m = mode_conversion(mode);
-  fd = ::open(fname.c_str(), m, 0666);
+  int flag = mode_conversion(mode);
+  int prot = prot_conversion(mode);
+  if (access(fname.c_str(), F_OK) != -1) {
+    flag |= O_CREAT;
+  }
+  fd = ::open(fname.c_str(), flag, 0666);
+  if (fd == -1) {
+    std::cerr << "Error opening file" << std::endl;
+  }
   struct stat fileInfo;
   if (::fstat(fd, &fileInfo) == -1)
     std::cerr << "Error getting file size" << std::endl;
   size_ = fileInfo.st_size;
-  if (fd == -1)
-    std::cerr << "Error opening file" << std::endl;
+  file_ = static_cast<char*>(mmap(nullptr,
+                                  size_,
+                                  prot,
+                                  MAP_SHARED,
+                                  fd,
+                                  0));
+  if (file_ == MAP_FAILED) {
+    std::cerr << "Error mapping file" << std::endl;
+  }
 }
 
 void mem_map::fstream::close() {
   if (is_open()) {
     ftruncate(fd, size_);
+    msync(file_, size_, MS_SYNC);
+    munmap(file_, size_);
     int result = ::close(fd);
     if (result == -1) {
       std::cerr << "Error closing file" << std::endl;
@@ -69,27 +98,11 @@ std::size_t mem_map::fstream::size() const {
 }
 
 char mem_map::fstream::get() {
-  struct stat fileInfo;
-  if (::fstat(fd, &fileInfo) == -1)
-    std::cerr << "Error getting file size" << std::endl;
-  std::cout << fileInfo.st_size << std::endl;
-  char* fileData = static_cast<char*>(mmap(nullptr,
-                                      fileInfo.st_size,
-                                      PROT_READ,
-                                      MAP_PRIVATE,
-                                      fd,
-                                      0));
-  if (fileData == MAP_FAILED) {
-    std::cerr << "Error mapping file" << std::endl;
-  }
   if (cursor == size_) {
     cursor = 0;
   }
-  char c = fileData[cursor];
+  char c = file_[cursor];
   cursor++;
-  msync(fileData, size_, MS_SYNC);
-  munmap(fileData, size_);
-  
   return c;
 }
 
@@ -98,19 +111,9 @@ mem_map::fstream& mem_map::fstream::put(char c) {
     size_++;
     ftruncate(fd, size_);
   }
-  char* fileData = static_cast<char*>(mmap(nullptr,
-                                      size_,
-                                      PROT_READ | PROT_WRITE,
-                                      MAP_SHARED,
-                                      fd,
-                                      0));
-  if (fileData == MAP_FAILED) {
-    std::cerr << "Error mapping file" << std::endl;
-  }
-  fileData[cursor] = c;
+  file_ = static_cast<char*>(mremap(file_, size_ - 1, size_, MREMAP_MAYMOVE));
+  file_[cursor] = c;
   cursor++;
-  msync(fileData, size_, MS_SYNC);
-  munmap(fileData, size_);
   return *this;
 }
 
@@ -121,7 +124,7 @@ int mem_map::fstream::mode_conversion(std::ios_base::openmode mode) {
   } else if (mode & std::ios_base::in) {
     mask |= O_RDONLY;
   } else if (mode & std::ios_base::out) {
-    mask |= O_WRONLY | O_CREAT;
+    mask |= O_WRONLY;
   }
   if (mode & std::ios_base::ate) {
     mask |= O_APPEND;
@@ -129,6 +132,19 @@ int mem_map::fstream::mode_conversion(std::ios_base::openmode mode) {
   }
   return mask;
 }
+
+int mem_map::fstream::prot_conversion(std::ios_base::openmode mode) {
+  int mask = 0;
+  if (mode & std::ios_base::in && mode & std::ios_base::out) {
+    mask |= PROT_READ | PROT_WRITE;
+  } else if (mode & std::ios_base::in) {
+    mask |= PROT_READ;
+  } else if (mode & std::ios_base::out) {
+    mask |= PROT_WRITE;
+  }
+  return mask;
+}
+
 
 
 

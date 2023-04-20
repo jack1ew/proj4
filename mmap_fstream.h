@@ -125,8 +125,7 @@ class fstream {
   int mode_conversion(std::ios_base::openmode mode);
 
  private:
-  size_t file_size;
-  size_t cursor = 0;
+  std::size_t cursor = 0;
   char* file_;
   int fd;
   std::size_t size_;
