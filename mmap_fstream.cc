@@ -88,6 +88,10 @@ char mem_map::fstream::get() {
 }
 
 mem_map::fstream& mem_map::fstream::put(char c) {
+  if (cursor == size_) {
+    size_++;
+    ftruncate(fd, size_);
+  }
   char* fileData = static_cast<char*>(mmap(nullptr,
                                       size_,
                                       PROT_READ | PROT_WRITE,
@@ -98,11 +102,6 @@ mem_map::fstream& mem_map::fstream::put(char c) {
   if (fileData == MAP_FAILED) {
     std::cerr << "Error mapping file" << std::endl;
   }
-  if (cursor == size_) {
-    size_++;
-    ftruncate(fd, size_);
-  }
-  std::cout << size_ << std::endl;
   fileData[cursor] = c;
   cursor++;
 }
