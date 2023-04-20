@@ -110,6 +110,7 @@ mem_map::fstream& mem_map::fstream::put(char c) {
   cursor++;
   msync(fileData, size_, MS_SYNC);
   munmap(fileData, size_);
+  return *this;
 }
 
 int mem_map::fstream::mode_conversion(std::ios_base::openmode mode) {
