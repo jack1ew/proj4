@@ -33,7 +33,7 @@ void mem_map::fstream::open(const std::string& fname) {
   file_ = static_cast<char*>(mmap(nullptr,
                                   size_,
                                   prot,
-                                  MAP_PRIVATE,
+                                  MAP_SHARED,
                                   fd,
                                   0));
   if (file_ == MAP_FAILED) {
@@ -136,13 +136,10 @@ int mem_map::fstream::mode_conversion(std::ios_base::openmode mode) {
 
 int mem_map::fstream::prot_conversion(std::ios_base::openmode mode) {
   int mask = 0;
-  if (mode & std::ios_base::in && mode & std::ios_base::out) {
-    mask |= PROT_READ | PROT_WRITE;
-  } else if (mode & std::ios_base::in) {
+  if (mode & std::ios_base::in)
     mask |= PROT_READ;
-  } else if (mode & std::ios_base::out) {
+  if (mode & std::ios_base::out)
     mask |= PROT_WRITE;
-  }
   return mask;
 }
 
