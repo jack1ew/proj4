@@ -108,6 +108,7 @@ mem_map::fstream& mem_map::fstream::put(char c) {
   }
   fileData[cursor] = c;
   cursor++;
+  msync(fileData, size_, MS_SYNC);
   munmap(fileData, size_);
 }
 
