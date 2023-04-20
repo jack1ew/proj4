@@ -33,8 +33,12 @@ void mem_map::fstream::open(const std::string& fname) {
   size_ = fileInfo.st_size;
   if (size_ == 0) {
     size_ += 1;
+
+    // ALLOCATE FILE MEMORY
     ftruncate(fd, size_);
   }
+
+  // MEMORY MAP OPEN FILE
   file_ = static_cast<char*>(mmap(nullptr,
                                   size_,
                                   prot,
@@ -46,11 +50,6 @@ void mem_map::fstream::open(const std::string& fname) {
   }
 }
 
-// use open open
-// use access for checking if file exists
-// fstat size
-// mmap for put and get
-// O_CREATE do not include if the file already exists.
 void mem_map::fstream::open(const std::string& fname,
                             std::ios_base::openmode mode) {
   int flag = mode_conversion(mode);
@@ -71,8 +70,12 @@ void mem_map::fstream::open(const std::string& fname,
   }
   if (size_ == 0) {
     size_ += 1;
+
+    // ALLOCATE FILE MEMORY
     ftruncate(fd, size_);
   }
+
+  // MEMORY MAP OPEN FILE
   file_ = static_cast<char*>(mmap(nullptr,
                                   size_,
                                   prot,
@@ -86,7 +89,11 @@ void mem_map::fstream::open(const std::string& fname,
 
 void mem_map::fstream::close() {
   if (is_open()) {
+
+    // ALLOCATE FILE MEMORY
     ftruncate(fd, size_);
+
+    // SAVE TO DISK
     msync(file_, size_, MS_SYNC);
     munmap(file_, size_);
     int result = ::close(fd);
@@ -109,6 +116,7 @@ std::size_t mem_map::fstream::size() const {
   return size_;
 }
 
+// READ FROM FILE
 char mem_map::fstream::get() {
   if (cursor == size_) {
     cursor = 0;
@@ -118,9 +126,12 @@ char mem_map::fstream::get() {
   return c;
 }
 
+// WRITE TO FILE
 mem_map::fstream& mem_map::fstream::put(char c) {
   if (cursor == size_) {
     size_++;
+
+    // ALLOCATE FILE MEMORY
     ftruncate(fd, size_);
   }
   file_[cursor] = c;
