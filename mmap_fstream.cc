@@ -99,12 +99,11 @@ mem_map::fstream& mem_map::fstream::put(char c) {
     std::cerr << "Error mapping file" << std::endl;
   }
   if (cursor == size_) {
-    file_size++;
+    size_++;
+    ftruncate(fd, size_);
   }
   fileData[cursor] = c;
   cursor++;
-  
-  ftruncate(fd, size_);
 }
 
 int mem_map::fstream::mode_conversion(std::ios_base::openmode mode) {
