@@ -30,6 +30,8 @@ void mem_map::fstream::open(const std::string& fname) {
   if (::fstat(fd, &fileInfo) == -1)
     std::cerr << "Error getting file size" << std::endl;
   size_ = fileInfo.st_size;
+  if (size_ == 0)
+    size_ += 1;
   file_ = static_cast<char*>(mmap(nullptr,
                                   size_,
                                   prot,
@@ -60,6 +62,8 @@ void mem_map::fstream::open(const std::string& fname, std::ios_base::openmode mo
   if (::fstat(fd, &fileInfo) == -1)
     std::cerr << "Error getting file size" << std::endl;
   size_ = fileInfo.st_size;
+  if (size_ == 0)
+    size_ += 1;
   file_ = static_cast<char*>(mmap(nullptr,
                                   size_,
                                   prot,
