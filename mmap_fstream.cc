@@ -46,10 +46,12 @@ void mem_map::fstream::open(const std::string& fname, std::ios_base::openmode mo
 
 void mem_map::fstream::close() {
   if (is_open()) {
+    ftruncate(fd, size_);
     int result = ::close(fd);
     if (result == -1) {
       std::cerr << "Error closing file" << std::endl;
     }
+    
   }
 }
 
@@ -124,7 +126,7 @@ int mem_map::fstream::mode_conversion(std::ios_base::openmode mode) {
   }
   if (mode & std::ios_base::ate) {
     mask |= O_APPEND;
-    cursor = lseek(fd, 0, SEEK_END);
+    cursor = size();
   }
   return mask;
 }
