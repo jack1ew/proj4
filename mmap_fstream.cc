@@ -33,7 +33,7 @@ void mem_map::fstream::open(const std::string& fname) {
   file_ = static_cast<char*>(mmap(nullptr,
                                   size_,
                                   prot,
-                                  MAP_SHARED,
+                                  MAP_PRIVATE,
                                   fd,
                                   0));
   if (file_ == MAP_FAILED) {
