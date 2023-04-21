@@ -52,14 +52,28 @@ bool TestConstructorOpenAndSize() {
   std::cout << "\tExpected size: " << kTestSize << std::endl;
   std::cout << "\tActual size: " << fstream.size() << std::endl;
 
+  if (!fstream.is_open()) {
+    std::cout << "\tResult: FAILED" << std::endl;
+    return false;
+  }
+
   if (fstream.size() == kTestSize) {
     fstream.close();
+    if (fstream.is_open()) {
+      std::cout << "\tResult: FAILEDn \n\tSTILL OPEN" << std::endl;
+    }
     std::cout << "\tResult: PASSED" << std::endl;
     return true;
   }
 
+  
+    
+
   std::cout << "\tResult: FAILED" << std::endl;
   fstream.close();
+  if (fstream.is_open()) {
+    std::cout << "\tResult: FAILEDn \n\tSTILL OPEN" << std::endl;
+  }
   return false;
 }
 
