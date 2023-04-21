@@ -97,8 +97,8 @@ bool TestOpenIsOpenAndGet() {
 
   bool passed = true;
   char c = fstream.get();
+  int i = 0;
   while (c) {
-    int i = 0;
     std::cout << "\tExpected: " << kTestValues[i] << ", Actual: " << c
       << std::endl;
     if (kTestValues[i] != c)
