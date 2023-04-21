@@ -96,13 +96,14 @@ bool TestOpenIsOpenAndGet() {
   }
 
   bool passed = true;
+  char c = fstream.get();
   while (c) {
     int i = 0;
-    char c = fstream.get();
     std::cout << "\tExpected: " << kTestValues[i] << ", Actual: " << c
       << std::endl;
     if (kTestValues[i] != c)
       passed = false;
+    c = fstream.get();
     if (i == kTestSize - 1)
       break;
     i++;
