@@ -146,7 +146,7 @@ bool TestOpenIsOpenPut_newSizeAndGet() {
     fstream_out.put(kTestValues[i]);
 
   fstream_out.close();
-  if (fstream.is_open()) {
+  if (fstream_out.is_open()) {
     std::cout << "\tResult: FAILEDn \n\tSTILL OPEN" << std::endl;
   }
 
@@ -174,7 +174,7 @@ bool TestOpenIsOpenPut_newSizeAndGet() {
   }
 
   fstream_in.close();
-  if (fstream.is_open()) {
+  if (fstream_in.is_open()) {
     std::cout << "\tResult: FAILEDn \n\tSTILL OPEN" << std::endl;
   }
 
@@ -215,7 +215,7 @@ bool TestOpenIsOpenSizePutAteAndGet() {
     fstream_out.put(kTestValues[i]);
 
   fstream_out.close();
-  if (fstream.is_open()) {
+  if (fstream_out.is_open()) {
     std::cout << "\tResult: FAILEDn \n\tSTILL OPEN" << std::endl;
   }
 
@@ -244,7 +244,7 @@ bool TestOpenIsOpenSizePutAteAndGet() {
   }
 
   fstream_in.close();
-  if (fstream.is_open()) {
+  if (fstream_in.is_open()) {
     std::cout << "\tResult: FAILEDn \n\tSTILL OPEN" << std::endl;
   }
 
