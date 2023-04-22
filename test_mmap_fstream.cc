@@ -110,6 +110,9 @@ bool TestOpenIsOpenAndGet() {
   }
 
   fstream.close();
+  if (fstream.is_open()) {
+    std::cout << "\tResult: FAILEDn \n\tSTILL OPEN" << std::endl;
+  }
 
   if (passed)
     std::cout << "\tResult: PASSED" << std::endl;
@@ -143,6 +146,9 @@ bool TestOpenIsOpenPut_newSizeAndGet() {
     fstream_out.put(kTestValues[i]);
 
   fstream_out.close();
+  if (fstream.is_open()) {
+    std::cout << "\tResult: FAILEDn \n\tSTILL OPEN" << std::endl;
+  }
 
   // open file to read results of write
   bool passed = true;
@@ -154,15 +160,23 @@ bool TestOpenIsOpenPut_newSizeAndGet() {
   if (fstream_in.size() != kTestSize)
     passed = false;
 
-  for (std::size_t i = 0; i < kTestSize; ++i) {
-    char c = fstream_in.get();
+  int i = 0;
+  char c = fstream_in.get();
+  while (c) {
+    if (i == kTestSize)
+      return false;
     std::cout << "\tExpected: " << kTestValues[i] << ", Actual: " << c
       << std::endl;
     if (kTestValues[i] != c)
       passed = false;
+    c = fstream_in.get();
+    i++;
   }
 
   fstream_in.close();
+  if (fstream.is_open()) {
+    std::cout << "\tResult: FAILEDn \n\tSTILL OPEN" << std::endl;
+  }
 
   if (passed)
     std::cout << "\tResult: PASSED" << std::endl;
@@ -201,6 +215,9 @@ bool TestOpenIsOpenSizePutAteAndGet() {
     fstream_out.put(kTestValues[i]);
 
   fstream_out.close();
+  if (fstream.is_open()) {
+    std::cout << "\tResult: FAILEDn \n\tSTILL OPEN" << std::endl;
+  }
 
   // open file to read results of write
   bool passed = true;
@@ -212,16 +229,24 @@ bool TestOpenIsOpenSizePutAteAndGet() {
     std::cout << "\tResult: FALSE" << std::endl;
     passed = false;
   }
-
-  for (std::size_t i = 0; i < kResultSize; ++i) {
-    char c = fstream_in.get();
+  
+  int i = 0;
+  char c = fstream_in.get();
+  while (c) {
+    if (i == kResultSize)
+      return false;
     std::cout << "\tExpected: " << kResultValues[i] << ", Actual: " << c
       << std::endl;
     if (kResultValues[i] != c)
       passed = false;
+    c = fstream_in.get();
+    i++;
   }
 
   fstream_in.close();
+  if (fstream.is_open()) {
+    std::cout << "\tResult: FAILEDn \n\tSTILL OPEN" << std::endl;
+  }
 
   if (passed)
     std::cout << "\tResult: PASSED" << std::endl;
