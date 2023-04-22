@@ -119,10 +119,7 @@ std::size_t mem_map::fstream::size() const {
 // READ FROM FILE
 char mem_map::fstream::get() {
   if (cursor == size_) {
-    size_++;
-
-    // ALLOCATE FILE MEMORY
-    ftruncate(fd, size_);
+    return "\0";
   }
   char c = file_[cursor];
   cursor++;
