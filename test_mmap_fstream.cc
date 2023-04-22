@@ -105,7 +105,7 @@ bool TestOpenIsOpenAndGet() {
       passed = false;
     c = fstream.get();
     if (i == kTestSize - 1)
-      break;
+      return false;
     i++;
   }
 
