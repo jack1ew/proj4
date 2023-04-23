@@ -161,15 +161,19 @@ bool TestOpenIsOpenPut_newSizeAndGet() {
     passed = false;
 
   int i = 0;
-  char c = fstream_in.get();
-  while (c) {
+  char c = 1;
+
+  while (true) {
+    c = fstream_in.get();
+    if (c == 0) {
+      break;
+    }
     if (i == kTestSize)
       return false;
     std::cout << "\tExpected: " << kTestValues[i] << ", Actual: " << c
       << std::endl;
     if (kTestValues[i] != c)
       passed = false;
-    c = fstream_in.get();
     i++;
   }
 
