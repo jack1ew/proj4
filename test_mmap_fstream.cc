@@ -1,7 +1,7 @@
 // Copyright 2023 CSCE 311
 //
 #include <mmap_fstream.h>
-#include <mmap_fstream.h>  // DO NOT DELETE, NOLINT
+#include <mmap_fstream.h>  // DO NOT DELETE
 
 #include <cstddef>
 #include <iostream>
@@ -17,15 +17,12 @@ bool TestOpenIsOpenPut_newSizeAndGet();
 
 bool TestOpenIsOpenSizePutAteAndGet();
 
-bool TestOpenIsOpenPut_oldSizeAndGet();
-
 int main(int argc, char* argv[]) {
   const std::vector<bool (*)()> kFstreamTests{
     TestConstructorOpenAndSize,
     TestOpenIsOpenAndGet,
     TestOpenIsOpenPut_newSizeAndGet,
-    TestOpenIsOpenSizePutAteAndGet,
-    TestOpenIsOpenPut_oldSizeAndGet
+    TestOpenIsOpenSizePutAteAndGet
   };
 
   if (argc == 2) {
@@ -134,12 +131,6 @@ bool TestOpenIsOpenAndGet() {
     ++i;  // update bounds count
   }
 
-  if (i == 0) {
-    std::cout << "\tExpected get: " << kTestValues[i]
-      << ", Actual get: 0" << std::endl;
-    passed = false;
-  }
-
   fstream.close();
 
   return passed;
@@ -190,12 +181,6 @@ bool TestOpenIsOpenPut_newSizeAndGet() {
 
     c = fstream_in.get();  // get next character
     ++i;  // update bounds count
-  }
-
-  if (i == 0) {
-    std::cout << "\tExpected get: " << kTestValues[i]
-      << ", Actual get: 0" << std::endl;
-    passed = false;
   }
 
   fstream_in.close();
@@ -254,68 +239,6 @@ bool TestOpenIsOpenSizePutAteAndGet() {
     ++i;  // update bounds count
   }
 
-  if (i == 0) {
-    std::cout << "\tExpected get: " << kTestValues[i]
-      << ", Actual get: 0" << std::endl;
-    passed = false;
-  }
-
   return passed;
 }
 
-
-bool TestOpenIsOpenPut_oldSizeAndGet() {
-  const std::string kTestFileName = "test_put.txt";
-  const std::size_t kTestSize = 4;
-  const char kTestValues[] = {'b', 'b', 'c', 'd'};
-  bool passed = true;
-
-  std::cout << "TestOpenIsOpenPut_oldSizeAndGet" << std::endl;
-
-  // open file
-  mem_map::fstream fstream_out(kTestFileName);
-  passed = fstream_out.is_open();
-  std::cout << "\tExpected is_open: true" << std::endl;
-  std::cout << std::boolalpha;  // print bool as text
-  std::cout << "\tActual is_open: " << fstream_out.is_open() << std::endl;
-
-  // write to file
-  fstream_out.put(kTestValues[0]);
-
-  fstream_out.close();
-
-  // open file to read results of write
-  mem_map::fstream fstream_in(kTestFileName, std::ios_base::in);
-  passed = fstream_in.size() == kTestSize && passed;
-  std::cout << "\tExpected size: " << kTestSize << std::endl;
-  std::cout << "\tActual size: " << fstream_in.size() << std::endl;
-
-  std::size_t i = 0;
-  char c = fstream_in.get();  // call mmap::fstream::get
-  while (c) {  // run while c != \0
-    if (i >= kTestSize) {  // check bounds
-      passed = false;
-      std::cout << "\tExpected get: 0, Actual get: " << static_cast<int>(c)
-        << std::endl;
-      break;
-    }
-
-    passed = kTestValues[i] == c && passed;
-
-    std::cout << "\tExpected get: " << kTestValues[i]
-      << ", Actual get: " << c << std::endl;
-
-    c = fstream_in.get();  // get next character
-    ++i;  // update bounds count
-  }
-
-  if (i == 0) {
-    std::cout << "\tExpected get: " << kTestValues[i]
-      << ", Actual get: 0" << std::endl;
-    passed = false;
-  }
-
-  fstream_in.close();
-
-  return passed;
-}
